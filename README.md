@@ -22,7 +22,7 @@ The framework is heavily inspired by
 A simple test looks like this. Note that `lexical-binding: t` is
 **required** in files defining buttercup tests.
 
-```Lisp
+```Emacs-Lisp
 ;;; lexical-binding is required -*- lexical-binding: t; -*-
 (describe "A suite"
   (it "contains a spec with an expectation"
@@ -39,7 +39,7 @@ You can install buttercup from
 [MELPA Stable](http://stable.melpa.org/). Add the following to your
 `init.el` or `.emacs` file:
 
-```
+```Emacs-Lisp
 (require 'package)
 ;; Available as a default in GNU Emacs from version 28.1
 (add-to-list 'package-archives
@@ -55,7 +55,7 @@ simply `apt-get install elpa-buttercup`.
 
 Now create a file called `test-feature.el` with these contents:
 
-```Lisp
+```Emacs-Lisp
 ;;; -*- lexical-binding: t; -*-
 (describe "A suite"
   (it "contains a spec with an expectation"
