@@ -1616,13 +1616,20 @@ specs will be marked as pending when MATCHER does not match."
 (defun buttercup--mark-skipped (suites predicate &optional reverse-predicate)
   "Mark all specs in SUITES as skipped if PREDICATE(spec) is true.
 If REVERSE-PREDICATE is non-nil, mark spec where PREDICATE(spec)
-is false."
-  (dolist (spec (buttercup--specs suites))
-    ;; cond implements (xor reverse-predicate (funcall predicate
-    ;; spec)) as xor is introduced in Emacs 27
-    (when (cond ((not reverse-predicate) (funcall predicate spec))
-                ((not (funcall predicate spec)) reverse-predicate))
-      (buttercup--spec-mark-pending spec "SKIPPED"))))
+is false.
+SUITES can actually be a list of specs and suites."
+  (let ((checker (if reverse-predicate
+                     (lambda (spec) (not (funcall predicate spec)))
+                   predicate)))
+    (cl-loop for sos in suites
+             if (buttercup-spec-p sos)
+              if (funcall checker sos)
+               do (buttercup--spec-mark-pending sos "SKIPPED")
+              end
+             else
+              do (buttercup--mark-skipped
+                  (buttercup-suite-children sos)
+                  checker))))
 
 ;;;###autoload
 (defun buttercup-run-markdown-buffer (&rest markdown-buffers)
