@@ -1607,10 +1607,9 @@ specs will be marked as pending when MATCHER does not match."
     (function (buttercup--mark-skipped buttercup-suites matcher reverse))
     (list (cond
            ((cl-every #'stringp matcher)
-            (buttercup-mark-skipped (mapconcat (lambda (re)
-                                                 (concat "\\(?:" re "\\)"))
-                                               matcher "\\|")
-                                    reverse))
+            (buttercup-mark-skipped
+             (rx-to-string `(or ,@(mapcar (lambda (p) `(regexp ,p)) matcher)))
+             reverse))
            (t (error "Bad matcher list: %s, should be list of strings" matcher))))))
 
 (defun buttercup--mark-skipped (suites predicate &optional reverse-predicate)
