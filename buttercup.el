@@ -815,7 +815,10 @@ Return CHILD."
   child)
 
 (defun buttercup-suite-or-spec-parents (suite-or-spec)
-  "Return a list of parents of SUITE-OR-SPEC."
+  "Return a list of parents (or ancestors) of SUITE-OR-SPEC.
+The first element of the returned list is the parent, the second the
+grandparent, and so on. Return the empty list if SUITE-OR-SPEC has no
+parent."
   (cl-loop for parent = (buttercup-suite-or-spec-parent (or parent suite-or-spec))
            while parent collect parent))
 
@@ -868,20 +871,22 @@ Return CHILD."
                       (buttercup--specs-and-suites
                        (buttercup-suite-children spec-or-suite))))))))
 
-(defun buttercup-suite-full-name (suite)
-  "Return the full name of SUITE, which includes the names of the parents."
-  (mapconcat #'buttercup-suite-description
-             (nreverse (cons suite (buttercup-suite-or-spec-parents suite)))
+(defun buttercup--suite-or-spec-full-name (suite-or-spec)
+  "Return the full name of SUITE-OR-SPEC including the names of the parents."
+  (mapconcat #'buttercup-suite-or-spec-description
+             (nreverse (cons suite-or-spec
+                             (buttercup-suite-or-spec-parents suite-or-spec)))
              " "))
 
-(defun buttercup-spec-full-name (spec)
-  "Return the full name of SPEC, which includes the full name of its suite."
-  (let ((parent (buttercup-spec-parent spec)))
-    (if parent
-        (concat (buttercup-suite-full-name parent)
-                " "
-                (buttercup-spec-description spec))
-      (buttercup-spec-description spec))))
+(defalias 'buttercup-suite-full-name 'buttercup--suite-or-spec-full-name
+  "Return the full name of SUITE including the names of the parents.
+
+\(fn suite)")
+
+(defalias 'buttercup-spec-full-name 'buttercup--suite-or-spec-full-name
+  "Return the full name of SPEC including the names of the parents.
+
+\(fn spec)")
 
 (defun buttercup--full-spec-names (spec-or-suite-list)
   "Return full names of all specs in SPEC-OR-SUITE-LIST."
