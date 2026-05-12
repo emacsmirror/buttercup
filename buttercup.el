@@ -890,9 +890,11 @@ parent."
 
 (defun buttercup--full-spec-names (spec-or-suite-list)
   "Return full names of all specs in SPEC-OR-SUITE-LIST."
-  (cl-loop
-   for x in (buttercup--specs spec-or-suite-list)
-   collect (buttercup-spec-full-name x)))
+   (cl-loop for sos in spec-or-suite-list
+            if (buttercup-spec-p sos)
+             collect (buttercup-spec-full-name sos)
+            else
+             nconc (buttercup--full-spec-names sos)))
 
 (defun buttercup--find-duplicate-spec-names (spec-or-suite-list)
   "Return duplicate full spec names among SPEC-OR-SUITE-LIST."
